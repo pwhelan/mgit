@@ -1,0 +1,25 @@
+{
+	"name": "pwhelan/mgit",
+	"description": "command line tool to control several linked repositories",
+	"keywords": ["git", "cli"],
+	"homepage": "http://github.com/pwhelan/mgit",
+	"authors": [
+		{
+			"name": "Phillip Whelan",
+			"email": "phil@click4time.com"
+		}	
+	],
+	"license": "MIT",
+	"require": {
+		"symfony/console": "v2.3.5",
+		"symfony/yaml": "v2.3.5",
+		"cpliakas/git-wrapper": "dev-master",
+		"jwage/purl": "dev-master"
+	},
+	"bin": ["bin/mgit"],
+	"autoload": {
+		"psr-0": {
+			"Pwhelan\\MGit": "src"
+		}
+	}
+}
