@@ -1,5 +1,13 @@
+# Ignore backup files
 DEADJOE
 *~
 
+# Ignore mgit phar box
+/mgit.phar
+
+# Ignore Composer files
 /vendor/
 /composer.lock
+
+# Ignore project files
+*.sublime-*
