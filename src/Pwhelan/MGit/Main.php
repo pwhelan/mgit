@@ -5,6 +5,7 @@ namespace Pwhelan\MGit;
 require_once __DIR__.'/../../../vendor/autoload.php';
 require_once __DIR__.'/AttachCommand.php';
 
+use GitWrapper\GitWrapper;
 use Symfony\Component\Console\Application;
 
 use Symfony\Component\Yaml\Parser;
@@ -32,6 +33,7 @@ class Main
 		self::$_application->add(new InitCommand);
 		self::$_application->add(new PullCommand);
 		self::$_application->add(new CommitCommand);
+		self::$_application->add(new GenerateCommand);
 	}
 	
 	public static function getCfgDir()
@@ -74,8 +76,12 @@ class Main
 		file_put_contents($dir.'/.mgit/mgit.yml', $yaml);
 	}
 	
-	public static function git()
+	public static function git($path = "./")
 	{
+		$wrapper = new GitWrapper();
+		$git = $wrapper->workingCopy(Main::getCfgDir().'/'.$path);
+		
+		return $git;
 	}
 	
 	public function __construct()
