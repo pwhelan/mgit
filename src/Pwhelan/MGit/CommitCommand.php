@@ -195,10 +195,6 @@ class CommitCommand extends Command
 				$argv[] = "--{$name}";
 				if ($option != 1)
 					$argv[] = $option;
-				/*
-				if ($value)
-					$argv[] = $value;
-				*/
 			}
 		}
 		
@@ -211,33 +207,13 @@ class CommitCommand extends Command
 		
 		
 		call_user_func_array([$git, 'commit'], $argv);
-		$result = $git->getOuput();
+		$result = $git->getOutput();
+		$git->clearOutput();
 		
-		
-		$commit = trim($git->clearOutput()
-			->run(['rev-parse', 'HEAD'])
-			->getOutput());
+		$git->run(['rev-parse', 'HEAD']);
+		$commit = trim($git->getOutput());
 		
 		$cfg['paths'][$path]['commit'] = $commit;
-		
 		Main::setConfiguration($cfg);
-		
-		/*
-		foreach($cfg['paths'] as $path => $pcfg) {
-			
-			$wrapper = new GitWrapper();
-			
-			$git = $wrapper->workingCopy(Main::getCfgDir().'/'.$path);
-			$commit = trim($git
-					->run(['rev-parse', 'HEAD'])
-					->getOutput());
-			
-			if ($commit != $pcfg['commit']) {
-				print "[{$path}]=> Pulling {$pcfg['remote']} -> {$pcfg['branch']}\n";
-				$git->pull($pcfg['remote'], $pcfg['branch']);
-				print "[{$path}] ".$git->getOutput();
-			}
-		}
-		*/
 	}
 }
