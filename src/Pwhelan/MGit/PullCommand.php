@@ -16,22 +16,64 @@ class PullCommand extends Command
 	{
 		$this
 			->setName("pull")
-			->setDescription("pull all the repositories");
+			->setDescription("pull repositories")
+			->addOption(
+				'force',
+				'F',
+				InputOption::VALUE_NONE,
+				'Force all subdirectories to pull'
+			);
 	}
 	
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$cfg = Main::getConfiguration();
+		$force	= $input->getOption('force');
+		$cfg	= Main::getConfiguration();
+		$cwd	= getcwd();
+		
+		foreach(array_keys($cfg['paths']) as $path) {
+			if (Main::getCfgDir().'/'.$path == $cwd) {
+				$cwd = $path;
+				$dcfg = $cfg['paths'][$path];
+				
+				$git = Main::git($path);
+				$git->pull($dcfg['remote'], $dcfg['branch']);
+			}
+		}
+		
+		
+		$output->writeLn("Pulling master repository");
+		
+		if ($cwd != ".") {
+			$git = Main::git();
+			$git->pull($cfg['paths']['.']['remote'], $cfg['paths']['.']['branch']);
+		}
+		
+		
+		$output->writeLn("Checking child directories");
+		
 		foreach($cfg['paths'] as $path => $pcfg) {
 			
-			$wrapper = new GitWrapper();
+			if ($path == '.' || $path == $cwd) {
+				continue;
+			}
 			
-			$git = $wrapper->workingCopy(Main::getCfgDir().'/'.$path);
-			$commit = trim($git
+			
+			$git = Main::git($path);
+			if (!is_dir($path)) {
+				mkdir($path);
+				$commit = null;
+				$git->pull($pcfg['remote'], $pcfg['branch']);
+			}
+			else {
+				$commit = trim($git
 					->run(['rev-parse', 'HEAD'])
 					->getOutput());
+			}
 			
-			if ($commit != $pcfg['commit']) {
+			$git->clearOutput();
+			
+			if ($commit != $pcfg['commit'] || $force) {
 				print "[{$path}]=> Pulling {$pcfg['remote']} -> {$pcfg['branch']}\n";
 				$git->pull($pcfg['remote'], $pcfg['branch']);
 				print "[{$path}] ".$git->getOutput();
