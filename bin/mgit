@@ -4,4 +4,14 @@
 require_once __DIR__.'/../vendor/autoload.php';
 
 $mgit = new Pwhelan\MGit\Main;
-$mgit->run();
+
+try {
+	$mgit->run();
+}
+catch(Pwhelan\MGit\UnknownCommandException $e) {
+	print "# PASS THRU\n";
+	$gitargs = $argv;
+	$gitargs[0] = 'git';
+	
+	passthru(implode(' ', $gitargs));
+}

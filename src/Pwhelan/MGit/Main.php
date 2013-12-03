@@ -6,7 +6,7 @@ require_once __DIR__.'/../../../vendor/autoload.php';
 require_once __DIR__.'/AttachCommand.php';
 
 use GitWrapper\GitWrapper;
-use Symfony\Component\Console\Application;
+//use Symfony\Component\Console\Application;
 
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;
@@ -26,7 +26,7 @@ class Main
 		}
 		
 		self::$_application = new Application();
-		
+				
 		self::$_application->add(new AttachCommand);
 		self::$_application->add(new PopulateCommand);
 		self::$_application->add(new CloneCommand);
